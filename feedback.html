@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LegitiMate - Feedback</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="styles/feedback.css" rel="stylesheet" >
+</head>
+<body>
+    <div class="aurora-background"></div>
+    <canvas id="particle-canvas"></canvas>
+
+    <header>
+        <div class="brand" aria-hidden="true">
+            <img  class="logo" src="images/logo.png" alt="logo">
+            <span>LegitMate</span>
+        </div>
+        <nav aria-label="Primary">
+            <a href="index.html">Home</a>
+            <a href="#">Features</a>
+            <a href="survey.html">Survey</a>
+            <a href="feedback.html">Feedback</a>
+            <a class="register" href="sign-up.html">Register/Login</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="main-layout">
+            <div class="spline-view">
+          <iframe src=" https://my.spline.design/ratingfeedback-2i2zzq4uLAhFsH4NkAckLFz3/" frameborder="0"></iframe>
+        </div>
+            <div class="container" id="form-container">      
+                <form id="feedback-form">
+                    <h1>Share Your Feedback</h1>
+                    <p>We'd love to hear your thoughts on how we can improve.</p>
+                    <div class="form-group">
+                        <label for="name">Name (Optional)</label>
+                        <input type="text" id="name" name="name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email (Optional)</label>
+                        <input type="email" id="email" name="email" placeholder="you@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="feedback">Feedback</label>
+                        <textarea id="feedback" name="feedback" placeholder="Tell us what you think..." required></textarea>
+                    </div>
+                    <button type="submit" class="button">Submit Feedback</button>
+                </form>
+                <div id="thank-you-message">
+                    <h1>Thank You!</h1>
+                    <p>Your feedback has been submitted successfully. We appreciate you taking the time to help us improve.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<script src="js/feedback.js"></script>
+</body>
+</html>

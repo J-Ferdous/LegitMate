@@ -1,0 +1,56 @@
+/* --- Header and Navigation --- */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 5%;
+  position: relative;
+  z-index: 10;
+  background: transparent;
+}
+
+.brand {
+  font-weight: 800;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 35px;
+  height: 35px;
+ /* background: var(--accent);*/
+  border-radius: 50%;
+  /*box-shadow: 0 0 15px var(--accent-glow);*/
+}
+
+nav {
+  display: flex;
+  gap: 30px;
+}
+
+nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: var(--text-light);
+}
+
+nav a.register {
+  background: var(--accent);
+  color: var(--text-light);
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+nav a.register:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 25px var(--accent-glow);
+}

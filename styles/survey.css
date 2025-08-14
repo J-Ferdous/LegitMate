@@ -1,0 +1,168 @@
+    :root {
+      --bg: #010206;
+      --muted: #A0AEC0;
+      --accent: #0081ff;
+      --accent-glow: rgba(0, 129, 255, 0.5);
+      --glass-bg: rgba(10, 15, 30, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --text-light: #F0F4FC;
+      --text-dark: #2c3e50;
+    }
+
+    body {
+      font-family: 'Inter', Arial, Helvetica, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-light);
+     
+      min-height: 100vh;
+      box-sizing: border-box;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* --- Dynamic Background ---*/
+    .aurora-background {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: -2;
+        background:
+            linear-gradient(45deg, hsla(217, 100%, 50%, 0.1) 0%, hsla(217, 100%, 50%, 0) 70%),
+            linear-gradient(135deg, hsla(186, 100%, 50%, 0.1) 0%, hsla(186, 100%, 50%, 0) 70%),
+            linear-gradient(225deg, hsla(294, 100%, 50%, 0.1) 0%, hsla(294, 100%, 50%, 0) 70%),
+            linear-gradient(315deg, hsla(33, 100%, 50%, 0.1) 0%, hsla(33, 100%, 50%, 0) 70%);
+        animation: aurora 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes aurora {
+        from { transform: rotate(0deg) scale(1.5); }
+        to { transform: rotate(360deg) scale(2.5); }
+    }
+
+    #particle-canvas {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: -1;
+    }
+
+    /* --- Glassmorphic Survey Container ---*/ 
+    .survey {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: var(--glass-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      padding: 40px;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      border: 1px solid var(--glass-border);
+      position: relative;
+      overflow: hidden;
+       padding: 40px 24px;
+    }
+
+    .survey::before {
+        content: '';
+        position: absolute;
+        top: var(--y, 50%);
+        left: var(--x, 50%);
+        transform: translate(-50%, -50%);
+        width: 800px;
+        height: 800px;
+        background: radial-gradient(circle, var(--accent-glow) 0%, rgba(0, 129, 255, 0) 60%);
+        opacity: 0;
+        transition: opacity 0.5s ease-out;
+        pointer-events: none;
+    }
+    .survey:hover::before {
+        opacity: 0.5;
+    }
+
+    h2 {
+      font-size: 28px;
+      margin: 0 0 30px;
+      color: var(--text-light);
+      text-align: center;
+      font-weight: 700;
+      text-shadow: 0 0 15px rgba(0, 129, 255, 0.3);
+    }
+    
+    fieldset {
+      border: 0;
+      margin: 30px 0;
+      padding: 0;
+      border-top: 1px solid var(--glass-border);
+      padding-top: 30px;
+    }
+
+    legend {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-start;
+    }
+    
+    .option {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--glass-border);
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--muted);
+      font-weight: 500;
+      transition: all .2s ease;
+    }
+    
+    input[type="radio"], input[type="checkbox"] {
+      display: none;
+    }
+
+    .option:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255,255,255,0.2);
+      color: var(--text-light);
+    }
+    
+    input[type="radio"]:checked + .option, input[type="checkbox"]:checked + .option {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--text-light);
+      font-weight: 600;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    
+    .submit-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: 0;
+      padding: 14px 30px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 25px var(--accent-glow);
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px var(--accent-glow);
+    }
