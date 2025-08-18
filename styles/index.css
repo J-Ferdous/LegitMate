@@ -406,4 +406,226 @@ h1 {
       .spline-frame { height:320px; }
       .form-row { flex-direction:column; align-items:stretch; }
       .btn { width:100%; }
-    }*/
+    }
+
+/* --- Analysis Modal Styles --- */
+.analysis-modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(0, 129, 255, 0.3);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.3s ease-out;
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: var(--text-light);
+}
+
+.modal-content h2 {
+    color: var(--text-light);
+    margin: 0 0 20px 0;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.result-container {
+    color: var(--text-light);
+}
+
+.risk-level {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid;
+}
+
+.risk-level.high {
+    background: rgba(255, 59, 48, 0.1);
+    border-color: rgba(255, 59, 48, 0.3);
+}
+
+.risk-level.medium {
+    background: rgba(255, 149, 0, 0.1);
+    border-color: rgba(255, 149, 0, 0.3);
+}
+
+.risk-level.low {
+    background: rgba(255, 204, 0, 0.1);
+    border-color: rgba(255, 204, 0, 0.3);
+}
+
+.risk-level.very-low {
+    background: rgba(52, 199, 89, 0.1);
+    border-color: rgba(52, 199, 89, 0.3);
+}
+
+.risk-level h3 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.confidence {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.verdict {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0, 129, 255, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(0, 129, 255, 0.3);
+}
+
+.verdict h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.reasons {
+    margin-bottom: 20px;
+}
+
+.reasons h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.reasons ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.reasons li {
+    margin-bottom: 5px;
+    color: var(--text-muted);
+}
+
+.stats {
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stats p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* --- Notification Styles --- */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 10px;
+    color: white;
+    font-weight: 500;
+    z-index: 1001;
+    max-width: 300px;
+    animation: slideInRight 0.3s ease-out;
+}
+
+.notification.error {
+    background: linear-gradient(135deg, #ff3b30 0%, #ff6b6b 100%);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+}
+
+.notification.info {
+    background: linear-gradient(135deg, #007aff 0%, #5ac8fa 100%);
+    border: 1px solid rgba(0, 122, 255, 0.3);
+}
+
+.notification.success {
+    background: linear-gradient(135deg, #34c759 0%, #30d158 100%);
+    border: 1px solid rgba(52, 199, 89, 0.3);
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes slideInRight {
+    from { 
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to { 
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* --- Button Loading State --- */
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* --- Responsive Modal --- */
+@media (max-width: 768px) {
+    .modal-content {
+        padding: 20px;
+        margin: 20px;
+        width: calc(100% - 40px);
+    }
+    
+    .modal-content h2 {
+        font-size: 20px;
+    }
+    
+    .risk-level h3,
+    .verdict h3 {
+        font-size: 16px;
+    }
+}*/

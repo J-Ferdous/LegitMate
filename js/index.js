@@ -99,4 +99,121 @@
         mouse.radius = 150;
         init();
     });
+
+    // --- Job Description Analysis ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.querySelector('.input');
+        const submitBtn = document.querySelector('.btn');
+        
+        // Add click event to submit button
+        submitBtn.addEventListener('click', analyzeJobDescription);
+        
+        // Add enter key event to input
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzeJobDescription();
+            }
+        });
+    });
+
+    async function analyzeJobDescription() {
+        const input = document.querySelector('.input');
+        const submitBtn = document.querySelector('.btn');
+        const description = input.value.trim();
+        
+        if (!description) {
+            showNotification('Please enter a job description', 'error');
+            return;
+        }
+        
+        // Show loading state
+        submitBtn.textContent = 'Analyzing...';
+        submitBtn.disabled = true;
+        
+        try {
+            const response = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ description: description })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                showAnalysisResult(data.result);
+            } else {
+                showNotification(data.error || 'Analysis failed', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Network error. Please try again.', 'error');
+        } finally {
+            // Reset button state
+            submitBtn.textContent = 'submit';
+            submitBtn.disabled = false;
+        }
+    }
+
+    function showAnalysisResult(result) {
+        // Create modal for showing results
+        const modal = document.createElement('div');
+        modal.className = 'analysis-modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Analysis Result</h2>
+                <div class="result-container">
+                    <div class="risk-level ${result.risk_level.toLowerCase().replace(' ', '-')}">
+                        <h3>Risk Level: ${result.risk_level}</h3>
+                        <div class="confidence">Confidence: ${(result.confidence * 100).toFixed(1)}%</div>
+                    </div>
+                    <div class="verdict">
+                        <h3>Verdict: ${result.is_scam ? '⚠️ POTENTIAL SCAM' : '✅ LIKELY LEGITIMATE'}</h3>
+                    </div>
+                    ${result.reasons.length > 0 ? `
+                        <div class="reasons">
+                            <h4>Reasons:</h4>
+                            <ul>
+                                ${result.reasons.map(reason => `<li>${reason}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    <div class="stats">
+                        <p>Scam indicators found: ${result.scam_indicators_found}</p>
+                        <p>Total words analyzed: ${result.total_words}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Close modal functionality
+        const closeBtn = modal.querySelector('.close');
+        closeBtn.onclick = function() {
+            modal.remove();
+        }
+        
+        // Close modal when clicking outside
+        modal.onclick = function(event) {
+            if (event.target === modal) {
+                modal.remove();
+            }
+        }
+    }
+
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        // Remove notification after 5 seconds
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    }
   
