@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LegitiMate - Feedback</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="styles/shared.css" rel="stylesheet" >
 <link href="styles/feedback.css" rel="stylesheet" >
 </head>
 <body>
@@ -13,9 +14,14 @@
 
     <header>
         <div class="brand" aria-hidden="true">
-            <img  class="logo" src="images/logo.png" alt="logo">
+            <img class="logo" src="images/logo.png" alt="logo">
             <span>LegitMate</span>
         </div>
+        <div class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>    
         <nav aria-label="Primary">
             <a href="index.html">Home</a>
             <a href="#">Features</a>
@@ -55,7 +61,7 @@
             </div>
         </div>
     </main>
-
+<script src="js/shared.js"></script>
 <script src="js/feedback.js"></script>
 </body>
 </html>

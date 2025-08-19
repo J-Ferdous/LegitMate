@@ -12,8 +12,7 @@
     body {
       font-family: 'Inter', Arial, Helvetica, sans-serif;
       background-color: var(--bg);
-      color: var(--text-light);
-     
+      color: var(--text-light); 
       min-height: 100vh;
       box-sizing: border-box;
       position: relative;

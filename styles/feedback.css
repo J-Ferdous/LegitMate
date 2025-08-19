@@ -22,59 +22,6 @@ body {
   position: relative;
 }
 
-/* --- Header & Navigation --- */
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 5%;
-  position: relative;
-  z-index: 10;
-  background: transparent;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.brand {
-  font-weight: 800;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--text-light);
-}
-
-.logo {
-  width: 32px;
-  height: 32px;
-}
-
-nav {
-  display: flex;
-  gap: 30px;
-}
-nav a {
-  color: var(--text-muted);
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s;
-}
-nav a:hover { color: var(--text-light); }
-
-nav a.register {
-  background: var(--accent);
-  color: var(--text-light);
-  padding: 10px 20px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 20px rgba(0, 129, 255, 0.4);
-}
-nav a.register:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 25px var(--accent-glow);
-}
-.menu-toggle { display: none; } /* Hide for desktop */
-
 /* --- Dynamic Background --- */
 .aurora-background, #particle-canvas {
     position: fixed; /* Use fixed to keep behind everything */

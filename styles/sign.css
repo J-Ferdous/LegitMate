@@ -15,7 +15,6 @@ body {
   color: var(--text-light);
   height: 100vh;
   margin: 0;
-  /*display: flex;*/
   display: block;
   align-items: center;
   justify-content: center;
@@ -25,7 +24,7 @@ body {
 
 /* --- Dynamic Background --- */
 .aurora-background {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -105,14 +104,6 @@ body {
 }
 .container:hover::before {
     opacity: 1;
-}
-
-.logo {
-  color: var(--text-light);
-  font-size: 32px;
-  font-weight: 800;
-  margin-bottom: 20px;
-  text-shadow: 0 0 15px var(--accent-glow);
 }
 
 h1 {
@@ -360,4 +351,10 @@ h1 {
         opacity: 1;
         transform: translateX(0);
     }
+}
+@media (max-width: 900px) {
+    .spline-view { display:none; }
+    .main-content { align-items: center;} 
+    .container {align-items: center;margin: 15px auto;width: 320px;
+  padding: 30px;} 
 }
