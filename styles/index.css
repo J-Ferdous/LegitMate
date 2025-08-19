@@ -475,6 +475,11 @@ h1 {
     border-color: rgba(255, 59, 48, 0.3);
 }
 
+.risk-level.very-high {
+    background: rgba(255, 20, 20, 0.15);
+    border-color: rgba(255, 20, 20, 0.4);
+}
+
 .risk-level.medium {
     background: rgba(255, 149, 0, 0.1);
     border-color: rgba(255, 149, 0, 0.3);
@@ -547,6 +552,62 @@ h1 {
     margin: 5px 0;
     font-size: 14px;
     color: var(--text-muted);
+}
+
+.stats h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.confidence-breakdown {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.confidence-breakdown h4 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.confidence-item {
+    margin-bottom: 15px;
+}
+
+.confidence-item span {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.confidence-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.confidence-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, #5b49ff 100%);
+    border-radius: 4px;
+    transition: width 0.5s ease-in-out;
+}
+
+.analysis-method {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
 }
 
 /* --- Notification Styles --- */
@@ -628,4 +689,4 @@ h1 {
     .verdict h3 {
         font-size: 16px;
     }
-}*/
+}

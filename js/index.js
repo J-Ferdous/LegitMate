@@ -163,26 +163,45 @@
         modal.innerHTML = `
             <div class="modal-content">
                 <span class="close">&times;</span>
-                <h2>Analysis Result</h2>
+                <h2>🔍 Job Analysis Result</h2>
                 <div class="result-container">
                     <div class="risk-level ${result.risk_level.toLowerCase().replace(' ', '-')}">
                         <h3>Risk Level: ${result.risk_level}</h3>
-                        <div class="confidence">Confidence: ${(result.confidence * 100).toFixed(1)}%</div>
+                        <div class="confidence">Overall Confidence: ${(result.confidence * 100).toFixed(1)}%</div>
                     </div>
                     <div class="verdict">
                         <h3>Verdict: ${result.is_scam ? '⚠️ POTENTIAL SCAM' : '✅ LIKELY LEGITIMATE'}</h3>
                     </div>
+                    
+                    <div class="confidence-breakdown">
+                        <h4>📊 Confidence Breakdown:</h4>
+                        <div class="confidence-item">
+                            <span>ML Model: ${(result.ml_confidence * 100).toFixed(1)}%</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: ${result.ml_confidence * 100}%"></div>
+                            </div>
+                        </div>
+                        <div class="confidence-item">
+                            <span>Rule-based: ${(result.rule_based_confidence * 100).toFixed(1)}%</span>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" style="width: ${result.rule_based_confidence * 100}%"></div>
+                            </div>
+                        </div>
+                        <p class="analysis-method">Analysis Method: ${result.confidence_source}</p>
+                    </div>
+                    
                     ${result.reasons.length > 0 ? `
                         <div class="reasons">
-                            <h4>Reasons:</h4>
+                            <h4>🚩 Detection Reasons:</h4>
                             <ul>
                                 ${result.reasons.map(reason => `<li>${reason}</li>`).join('')}
                             </ul>
                         </div>
                     ` : ''}
                     <div class="stats">
-                        <p>Scam indicators found: ${result.scam_indicators_found}</p>
-                        <p>Total words analyzed: ${result.total_words}</p>
+                        <h4>📈 Analysis Statistics:</h4>
+                        <p>Scam indicators found: <strong>${result.scam_indicators_found}</strong></p>
+                        <p>Total words analyzed: <strong>${result.total_words}</strong></p>
                     </div>
                 </div>
             </div>

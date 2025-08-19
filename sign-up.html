@@ -1,26 +1,29 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LegitMate - Welcome to the Future</title>
+<title>LegitMate - Register</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="styles/sign.css" rel="stylesheet">
 <link href="styles/shared.css" rel="stylesheet">
+<style>
+  /* small inline tweaks for error messages */
+  .error-message { color: #ff4d4f; font-size: 0.9rem; margin-top: 6px; min-height: 1.1rem; }
+  .success-message { color: #16a34a; font-size: 0.95rem; margin-top: 8px; }
+  .hidden { display: none !important; }
+</style>
 </head>
 <body>
   <div class="aurora-background"></div>
   <canvas id="particle-canvas"></canvas>
-    <header>
+  <header>
     <div class="brand" aria-hidden="true">
-      <img  class="logo" src="images/logo.png" alt="logo">
+      <img class="logo" src="images/logo.png" alt="logo">
       <span>LegitMate</span>
     </div>
-    <div class="menu-toggle" onclick="toggleMenu()">
-      <span></span>
-      <span></span>
-      <span></span>
+    <div class="menu-toggle" onclick="document.querySelector('nav').classList.toggle('open')">
+      <span></span><span></span><span></span>
     </div>
     <nav aria-label="Primary">
       <a href="index.html">Home</a>
@@ -30,27 +33,58 @@
       <a class="register" href="sign-in.html">Login</a>
     </nav>
   </header>
+
   <div class="main-layout">
     <div class="spline-view">
       <iframe src="https://my.spline.design/greetingrobot-SGGKKmVi3jqTvOEAG1NWG8Oe/" frameborder="0"></iframe>
     </div>
+
     <div class="container" id="form-container">
-      <div class="logo">LegitiMate</div>
+      <div class="logo">LegitMate</div>
       <h1>Welcome!</h1>
+
       <div class="tabs">
-        <div><a href="sign-in.html"> Sign In</a></div>
+        <div><a href="sign-in.html">Sign In</a></div>
         <div class="active">Register</div>
       </div>
-      <button class="button google">
+
+      <button class="button google" type="button" disabled title="Coming soon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" height="20" alt="Google Logo">
         <span>Register with Google</span>
         <div class="button-glow"></div>
       </button>
-      <button class="button email">
+
+      <button class="button email" id="emailRegisterBtn" type="button">
         <img src="https://www.freeiconspng.com/uploads/gmail-logo-icon-2.png" height="20" alt="Email Icon">
         <span>Register with Email</span>
         <div class="button-glow"></div>
       </button>
+
+      <!-- Email Registration Form (initially hidden) -->
+      <div id="emailForm" class="email-form hidden">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          <div class="error-message" id="emailError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Min 6 characters" required>
+          <div class="error-message" id="passwordError"></div>
+        </div>
+
+        <button type="button" class="button submit" id="submitRegister">
+          <span>Create Account</span>
+          <div class="button-glow"></div>
+        </button>
+        <div class="success-message hidden" id="successMsg"></div>
+
+        <button type="button" class="button secondary" id="backToOptions">
+          <span>Back to Options</span>
+        </button>
+      </div>
+
       <div class="footer">
         Have an account? <a href="sign-in.html">Sign in</a>
       </div>
@@ -59,6 +93,91 @@
       </div>
     </div>
   </div>
-<script src="js/sign.js"></script>
+
+<script>
+  // --- Helpers ---
+  const $ = (s) => document.querySelector(s);
+  const show = (el) => el.classList.remove('hidden');
+  const hide = (el) => el.classList.add('hidden');
+
+  // Backend base URL detection:
+  // If page is served by Flask (same origin), use relative path.
+  // If opened from a different origin, default to http://127.0.0.1:5000
+  const isSameOrigin = window.location.origin.startsWith('http://127.0.0.1:5000')
+                    || window.location.origin.startsWith('http://localhost:5000');
+  const BACKEND_BASE = isSameOrigin ? '' : 'http://127.0.0.1:5000';
+
+  $('#emailRegisterBtn').addEventListener('click', () => {
+    hide($('#emailRegisterBtn').closest('.button'));
+    hide(document.querySelector('.button.google'));
+    show($('#emailForm'));
+  });
+
+  $('#backToOptions').addEventListener('click', () => {
+    show($('#emailRegisterBtn').closest('.button'));
+    show(document.querySelector('.button.google'));
+    hide($('#emailForm'));
+    $('#emailError').textContent = '';
+    $('#passwordError').textContent = '';
+    $('#successMsg').textContent = '';
+    hide($('#successMsg'));
+  });
+
+  function validateEmail(email) {
+    return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+  }
+
+  $('#submitRegister').addEventListener('click', async () => {
+    const email = $('#email').value.trim().toLowerCase();
+    const password = $('#password').value;
+
+    $('#emailError').textContent = '';
+    $('#passwordError').textContent = '';
+    $('#successMsg').textContent = '';
+    hide($('#successMsg'));
+
+    // Frontend validation
+    let hasError = false;
+    if (!validateEmail(email)) {
+      $('#emailError').textContent = 'Please enter a valid email address.';
+      hasError = true;
+    }
+    if (!password || password.length < 6) {
+      $('#passwordError').textContent = 'Password must be at least 6 characters.';
+      hasError = true;
+    }
+    if (hasError) return;
+
+    try {
+      const res = await fetch(`${BACKEND_BASE}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // important for session cookie
+        body: JSON.stringify({ email, password })
+      });
+
+      // If backend is down or blocked by CORS, fetch throws. Otherwise we check status:
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        const msg = (data && data.error) ? data.error : `HTTP ${res.status}`;
+        throw new Error(msg);
+      }
+
+      $('#successMsg').textContent = 'Registration successful! Redirecting to sign in...';
+      show($('#successMsg'));
+      setTimeout(() => window.location.href = 'sign-in.html', 1000);
+    } catch (err) {
+      // Typical causes: backend not running, wrong URL, CORS, or validation error
+      const message = (err && err.message) ? err.message : 'Network error. Please check server.';
+      // Heuristic: show emailError for duplicate/validation, otherwise generic
+      if (/exists|valid|email|password/i.test(message)) {
+        $('#emailError').textContent = message;
+      } else {
+        $('#emailError').textContent = `Network error: ${message}`;
+      }
+    }
+  });
+</script>
 </body>
 </html>

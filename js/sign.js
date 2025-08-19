@@ -84,29 +84,223 @@ window.addEventListener('resize', () => {
     init();
 });
 
-// --- NEW: Tab switching and redirection logic ---
-const signInTab = document.getElementById('signInTab');
-const registerTab = document.getElementById('registerTab');
-const formTitle = document.getElementById('form-title');
-const registerPageUrl = 'sign-up.html'; // The name of your registration file
+// --- Email form functionality ---
+document.addEventListener('DOMContentLoaded', function() {
+    const emailRegisterBtn = document.getElementById('emailRegisterBtn');
+    const emailSignInBtn = document.getElementById('emailSignInBtn');
+    const emailForm = document.getElementById('emailForm');
+    const backToOptions = document.getElementById('backToOptions');
+    const submitRegister = document.getElementById('submitRegister');
+    const submitSignIn = document.getElementById('submitSignIn');
 
-registerTab.addEventListener('click', () => {
-    // 1. Switch the active class for the underline effect
-    signInTab.classList.remove('active');
-    registerTab.classList.add('active');
+    // Show email form for registration
+    if (emailRegisterBtn) {
+        emailRegisterBtn.addEventListener('click', () => {
+            showEmailForm();
+        });
+    }
+
+    // Show email form for sign-in
+    if (emailSignInBtn) {
+        emailSignInBtn.addEventListener('click', () => {
+            showEmailForm();
+        });
+    }
+
+    // Back to options
+    if (backToOptions) {
+        backToOptions.addEventListener('click', () => {
+            hideEmailForm();
+        });
+    }
+
+    // Handle registration
+    if (submitRegister) {
+        submitRegister.addEventListener('click', handleRegistration);
+    }
+
+    // Handle sign-in
+    if (submitSignIn) {
+        submitSignIn.addEventListener('click', handleSignIn);
+    }
+
+    // Tab switching and redirection logic
+    const signInTab = document.getElementById('signInTab');
+    const registerTab = document.getElementById('registerTab');
+    const formTitle = document.getElementById('form-title');
+
+    if (registerTab) {
+        registerTab.addEventListener('click', () => {
+            signInTab.classList.remove('active');
+            registerTab.classList.add('active');
+            formTitle.textContent = 'Create an Account';
+            setTimeout(() => {
+                window.location.href = 'sign-up.html';
+            }, 300);
+        });
+    }
+
+    if (signInTab) {
+        signInTab.addEventListener('click', () => {
+            registerTab.classList.remove('active');
+            signInTab.classList.add('active');
+            formTitle.textContent = 'Welcome Back!';
+        });
+    }
+});
+
+function showEmailForm() {
+    const buttons = document.querySelectorAll('.button:not(#backToOptions):not(#submitRegister):not(#submitSignIn)');
+    const emailForm = document.getElementById('emailForm');
     
-    // 2. Change the title for better UX
-    formTitle.textContent = 'Create an Account';
+    buttons.forEach(btn => btn.style.display = 'none');
+    emailForm.style.display = 'block';
+}
 
-    // 3. Redirect after a short delay so the user sees the change
+function hideEmailForm() {
+    const buttons = document.querySelectorAll('.button:not(#backToOptions):not(#submitRegister):not(#submitSignIn)');
+    const emailForm = document.getElementById('emailForm');
+    
+    buttons.forEach(btn => btn.style.display = 'flex');
+    emailForm.style.display = 'none';
+    clearErrors();
+}
+
+function clearErrors() {
+    document.getElementById('emailError').textContent = '';
+    document.getElementById('passwordError').textContent = '';
+}
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function showError(elementId, message) {
+    document.getElementById(elementId).textContent = message;
+}
+
+async function handleRegistration() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const submitBtn = document.getElementById('submitRegister');
+    
+    clearErrors();
+    
+    // Validation
+    if (!email) {
+        showError('emailError', 'Email is required');
+        return;
+    }
+    
+    if (!validateEmail(email)) {
+        showError('emailError', 'Please enter a valid email address');
+        return;
+    }
+    
+    if (!password) {
+        showError('passwordError', 'Password is required');
+        return;
+    }
+    
+    if (password.length < 6) {
+        showError('passwordError', 'Password must be at least 6 characters');
+        return;
+    }
+    
+    // Show loading state
+    submitBtn.querySelector('span').textContent = 'Creating Account...';
+    submitBtn.disabled = true;
+    
+    try {
+        const response = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showNotification('Registration successful! Redirecting to home...', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        } else {
+            showError('emailError', data.error || 'Registration failed');
+        }
+    } catch (error) {
+        showError('emailError', 'Network error. Please try again.');
+    } finally {
+        submitBtn.querySelector('span').textContent = 'Create Account';
+        submitBtn.disabled = false;
+    }
+}
+
+async function handleSignIn() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const submitBtn = document.getElementById('submitSignIn');
+    
+    clearErrors();
+    
+    // Validation
+    if (!email) {
+        showError('emailError', 'Email is required');
+        return;
+    }
+    
+    if (!validateEmail(email)) {
+        showError('emailError', 'Please enter a valid email address');
+        return;
+    }
+    
+    if (!password) {
+        showError('passwordError', 'Password is required');
+        return;
+    }
+    
+    // Show loading state
+    submitBtn.querySelector('span').textContent = 'Signing In...';
+    submitBtn.disabled = true;
+    
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showNotification('Sign in successful! Redirecting to home...', 'success');
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        } else {
+            showError('emailError', data.error || 'Sign in failed');
+        }
+    } catch (error) {
+        showError('emailError', 'Network error. Please try again.');
+    } finally {
+        submitBtn.querySelector('span').textContent = 'Sign In';
+        submitBtn.disabled = false;
+    }
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
     setTimeout(() => {
-        window.location.href = registerPageUrl;
-    }, 300); // 300ms delay
-});
-
-signInTab.addEventListener('click', () => {
-    // This is for staying on the same page, just resets the state
-    registerTab.classList.remove('active');
-    signInTab.classList.add('active');
-    formTitle.textContent = 'Welcome Back!';
-});
+        notification.remove();
+    }, 5000);
+}
