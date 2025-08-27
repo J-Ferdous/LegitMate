@@ -13,13 +13,17 @@
   --bg: #010206;
 }
 
+a {
+    text-decoration: none;
+    color:var(--text-light);
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg);
   color: var(--text-light);
   margin: 0;
   height: 100vh;
-  overflow: hidden; 
   display: flex;
   flex-direction: column;
   position: relative; 
@@ -108,57 +112,6 @@ h1 {
   line-height: 1.6;
   margin: 24px 0;
 }
-
-.form-row {
-  display: flex;
-  gap: 10px;
-  background: rgba(10, 15, 30, 0.5);
-  padding: 8px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.1);
-  max-width: 500px;
-}
-
-.input {
-  flex-grow: 1;
-  border: none;
-  background: rgba(255,255,255,0.05);
-  padding: 14px;
-  font-size: 16px;
-  color: var(--text-light);
-  outline: none;
-  border-radius: 10px;
-  resize: none;
-  min-height: 60px;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-.input:focus {
-  background: rgba(255,255,255,0.08);
-  box-shadow: inset 0 0 6px var(--accent);
-}
-
-.input::placeholder {
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-.btn {
-  border: none;
-  background: var(--accent);
-  color: var(--text-light);
-  font-size: 16px;
-  font-weight: 600;
-  padding: 12px 24px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn:hover {
-  transform: scale(1.05);
-}
-
 
 /* --- Right Side (Spline) & Mobile --- */
 .right {
@@ -484,4 +437,90 @@ h1 {
     .verdict h3 {
         font-size: 16px;
     }
+}
+
+/* --- Form Container --- */
+.form-row {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically on small screens */
+  gap: 15px;
+  background: rgba(10, 15, 30, 0.6);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  max-width: 550px;
+  width: 200%;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 129, 255, 0.3);
+}
+
+/* --- Input Field --- */
+.input {
+  flex-grow: 1;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 16px;
+  font-size: 16px;
+  color: var(--text-light);
+  outline: none;
+  border-radius: 12px;
+  resize: vertical;
+  min-height: 120px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  line-height: 1.5;
+}
+
+.input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 10px var(--accent);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* --- Submit Button --- */
+.btn {
+  align-self: flex-end; /* Push button to the right on desktop */
+  border: none;
+  background: linear-gradient(135deg, var(--accent), #5b49ff);
+  color: var(--text-light);
+  font-size: 18px;
+  font-weight: 600;
+  padding: 14px 30px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 16px rgba(0, 129, 255, 0.3);
+}
+
+.btn:hover {
+  transform: scale(1.07);
+  box-shadow: 0 10px 20px rgba(0, 129, 255, 0.4);
+}
+
+/* --- Mobile Friendly --- */
+@media (max-width: 768px) {
+  .form-row {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .input {
+    min-height: 100px;
+    font-size: 14px;
+  }
+
+  .btn {
+    width: 100%; /* Full width on small screens */
+    align-self: center;
+    font-size: 16px;
+  }
 }
