@@ -82,3 +82,50 @@ window.addEventListener('resize', () => {
     mouse.radius = 150;
     init();
 });
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCPaYAW_OgQ7ch1EvM2DvXR2L3qBoOl-lM",
+    authDomain: "legitmate-e5b35.firebaseapp.com",
+    projectId: "legitmate-e5b35",
+    appId: "1:843217845569:web:52297b376df0fcb65c35c0",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const form = document.getElementById("survey-q1-11");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const surveyData = {};
+
+    formData.forEach((value, key) => {
+      if (key.endsWith("[]")) {
+        const actualKey = key.replace("[]", "");
+        if (!surveyData[actualKey]) {
+          surveyData[actualKey] = [];
+        }
+        surveyData[actualKey].push(value);
+      } else {
+        surveyData[key] = value;
+      }
+    });
+
+    try {
+      await addDoc(collection(db, "surveyResponses"), {
+        ...surveyData,
+        createdAt: new Date().toISOString(),
+      });
+
+      alert("Survey submitted successfully!");
+      form.reset();
+    } catch (error) {
+      console.error("Error saving survey:", error);
+      alert("Failed to submit survey. Please try again.");
+    }
+  });

@@ -124,10 +124,8 @@ if (startBtn) {
     const user = auth.currentUser;
 
     if (user) {
-      // ✅ User is logged in
       window.location.href = "job.html";
     } else {
-      // ❌ User is NOT logged in
       window.location.href = "sign.html";
     }
   });
