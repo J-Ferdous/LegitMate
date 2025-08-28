@@ -84,223 +84,234 @@ window.addEventListener('resize', () => {
     init();
 });
 
-// --- Email form functionality ---
-document.addEventListener('DOMContentLoaded', function() {
-    const emailRegisterBtn = document.getElementById('emailRegisterBtn');
-    const emailSignInBtn = document.getElementById('emailSignInBtn');
-    const emailForm = document.getElementById('emailForm');
-    const backToOptions = document.getElementById('backToOptions');
-    const submitRegister = document.getElementById('submitRegister');
-    const submitSignIn = document.getElementById('submitSignIn');
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  OAuthProvider,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    // Show email form for registration
-    if (emailRegisterBtn) {
-        emailRegisterBtn.addEventListener('click', () => {
-            showEmailForm();
-        });
-    }
+const firebaseConfig = {
+  apiKey: "AIzaSyCPaYAW_OgQ7ch1EvM2DvXR2L3qBoOl-lM",
+  authDomain: "legitmate-e5b35.firebaseapp.com",
+  projectId: "legitmate-e5b35",
+  appId: "1:843217845569:web:52297b376df0fcb65c35c0",
+};
 
-    // Show email form for sign-in
-    if (emailSignInBtn) {
-        emailSignInBtn.addEventListener('click', () => {
-            showEmailForm();
-        });
-    }
+const DASHBOARD_URL = "index.html"; 
 
-    // Back to options
-    if (backToOptions) {
-        backToOptions.addEventListener('click', () => {
-            hideEmailForm();
-        });
-    }
+// Init
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+auth.languageCode = "en"; 
+await setPersistence(auth, browserLocalPersistence);
 
-    // Handle registration
-    if (submitRegister) {
-        submitRegister.addEventListener('click', handleRegistration);
-    }
+const signInTab = document.getElementById("signInTab");
+const registerTab = document.getElementById("registerTab");
+const formTitle = document.getElementById("form-title");
 
-    // Handle sign-in
-    if (submitSignIn) {
-        submitSignIn.addEventListener('click', handleSignIn);
-    }
+const authForm   = document.getElementById("authForm");
+const emailInput = document.getElementById("email");
+const passInput  = document.getElementById("password");
+const confirmWrap= document.getElementById("confirmWrap");
+const confirmInp = document.getElementById("confirm");
+const submitBtn  = document.getElementById("submitBtn");
 
-    // Tab switching and redirection logic
-    const signInTab = document.getElementById('signInTab');
-    const registerTab = document.getElementById('registerTab');
-    const formTitle = document.getElementById('form-title');
+const errorMsg   = document.getElementById("errorMsg");
+const successMsg = document.getElementById("successMsg");
 
-    if (registerTab) {
-        registerTab.addEventListener('click', () => {
-            signInTab.classList.remove('active');
-            registerTab.classList.add('active');
-            formTitle.textContent = 'Create an Account';
-            setTimeout(() => {
-                window.location.href = 'sign-up.html';
-            }, 300);
-        });
-    }
+const googleBtn  = document.getElementById("googleBtn");
+const facebookBtn= document.getElementById("facebookBtn");
+const yahooBtn   = document.getElementById("yahooBtn");
+const switchToRegister = document.getElementById("switchToRegister");
 
-    if (signInTab) {
-        signInTab.addEventListener('click', () => {
-            registerTab.classList.remove('active');
-            signInTab.classList.add('active');
-            formTitle.textContent = 'Welcome Back!';
-        });
-    }
+let mode = "signin";
+
+function setMode(nextMode) {
+  mode = nextMode;
+  if (mode === "signin") {
+    signInTab.classList.add("active");
+    registerTab.classList.remove("active");
+    formTitle.textContent = "Welcome Back!";
+    confirmWrap.classList.add("hidden");
+    confirmInp.required = false;
+    submitBtn.textContent = "Sign In";
+    document.getElementById('footer-text').innerHTML = `Don't have an account? <a href="#" id="switchToRegister">Create one</a>`;
+  } else {
+    registerTab.classList.add("active");
+    signInTab.classList.remove("active");
+    formTitle.textContent = "Create Your Account";
+    confirmWrap.classList.remove("hidden");
+    confirmWrap.classList.add("flex");
+    confirmInp.required = true;
+    submitBtn.textContent = "Create Account";
+    document.getElementById('footer-text').innerHTML = `Already have an account? <a href="#" id="switchToRegister">Sign In</a>`;
+  }
+
+  const newLink = document.getElementById('switchToRegister');
+  newLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    setMode(mode === "signin" ? "register" : "signin");
+  });
+
+  clearMessages();
+}
+
+
+signInTab?.addEventListener("click", () => setMode("signin"));
+registerTab?.addEventListener("click", () => setMode("register"));
+switchToRegister?.addEventListener("click", (e) => {
+  e.preventDefault();
+  setMode("register");
 });
 
-function showEmailForm() {
-    const buttons = document.querySelectorAll('.button:not(#backToOptions):not(#submitRegister):not(#submitSignIn)');
-    const emailForm = document.getElementById('emailForm');
-    
-    buttons.forEach(btn => btn.style.display = 'none');
-    emailForm.style.display = 'block';
+function showError(message) {
+  errorMsg.textContent = message || "";
+  successMsg.textContent = "";
+}
+function showSuccess(message) {
+  successMsg.textContent = message || "";
+  errorMsg.textContent = "";
+}
+function clearMessages() {
+  showError("");
+  showSuccess("");
 }
 
-function hideEmailForm() {
-    const buttons = document.querySelectorAll('.button:not(#backToOptions):not(#submitRegister):not(#submitSignIn)');
-    const emailForm = document.getElementById('emailForm');
-    
-    buttons.forEach(btn => btn.style.display = 'flex');
-    emailForm.style.display = 'none';
-    clearErrors();
+function mapAuthError(err) {
+  const code = (err?.code || "").toLowerCase();
+  if (code.includes("network-request-failed")) return "Network error. Check your internet connection.";
+  if (code.includes("invalid-email")) return "Invalid email address.";
+  if (code.includes("user-not-found")) return "No user with that email. Try registering.";
+  if (code.includes("wrong-password")) return "Incorrect password.";
+  if (code.includes("email-already-in-use")) return "This email is already in use.";
+  if (code.includes("weak-password")) return "Password should be at least 6 characters.";
+  if (code.includes("popup-closed-by-user")) return "Popup closed. Please try again.";
+  if (code.includes("popup-blocked")) return "Popup blocked. Trying redirect flow…";
+  return err?.message || "Authentication error.";
 }
 
-function clearErrors() {
-    document.getElementById('emailError').textContent = '';
-    document.getElementById('passwordError').textContent = '';
+authForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  clearMessages();
+
+  const email = emailInput.value.trim();
+  const password = passInput.value;
+
+  if (!email || !password) {
+    showError("Please fill email and password.");
+    return;
+  }
+
+  try {
+    if (mode === "register") {
+      if (password !== confirmInp.value) {
+        showError("Passwords do not match.");
+        return;
+      }
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      try { await updateProfile(cred.user, { displayName: email.split("@")[0] }); } catch {}
+      showSuccess("Account created. Redirecting…");
+      setTimeout(() => (window.location.href = DASHBOARD_URL), 800);
+    } else {
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      showSuccess(`Welcome ${cred.user.email}. Redirecting…`);
+      setTimeout(() => (window.location.href = DASHBOARD_URL), 600);
+    }
+  } catch (err) {
+    const msg = mapAuthError(err);
+    showError(msg);
+  }
+});
+
+async function socialSignIn(provider, providerName) {
+  clearMessages();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+    showSuccess(`Welcome ${user.displayName || user.email}. Redirecting…`);
+    setTimeout(() => (window.location.href = DASHBOARD_URL), 500);
+  } catch (err) {
+    const msg = mapAuthError(err);
+    // If popup is blocked, try redirect flow
+    if (msg.includes("Trying redirect flow")) {
+      try {
+        await signInWithRedirect(auth, provider);
+        return; // browser navigates away; we'll handle on return
+      } catch (e) {
+        showError(mapAuthError(e));
+      }
+    } else {
+      showError(msg);
+    }
+  }
 }
 
-function validateEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+// Google
+googleBtn?.addEventListener("click", () => {
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: "select_account" });
+
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      const user = result.user;
+      showSuccess(`Welcome ${user.displayName || user.email}. Redirecting…`);
+      setTimeout(() => (window.location.href = DASHBOARD_URL), 500);
+    })
+    .catch(async (err) => {
+      const msg = mapAuthError(err);
+      if (msg.includes("Trying redirect flow")) {
+        await signInWithRedirect(auth, provider);
+      } else {
+        showError(msg);
+      }
+    });
+});
+
+
+// Facebook
+/*facebookBtn?.addEventListener("click", async () => {
+  const provider = new FacebookAuthProvider();
+  // provider.addScope("public_profile"); // optional scopes
+  await socialSignIn(provider, "Facebook");
+});
+
+// Yahoo (OIDC)
+yahooBtn?.addEventListener("click", async () => {
+  const provider = new OAuthProvider("yahoo.com");
+  await socialSignIn(provider, "Yahoo");
+});
+*/
+// Handle return from redirect
+try {
+  const redirectResult = await getRedirectResult(auth);
+  if (redirectResult?.user) {
+    showSuccess(`Welcome ${redirectResult.user.displayName || redirectResult.user.email}. Redirecting…`);
+    setTimeout(() => (window.location.href = DASHBOARD_URL), 500);
+  }
+} catch (err) {
+  showError(mapAuthError(err));
 }
 
-function showError(elementId, message) {
-    document.getElementById(elementId).textContent = message;
-}
 
-async function handleRegistration() {
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const submitBtn = document.getElementById('submitRegister');
-    
-    clearErrors();
-    
-    // Validation
-    if (!email) {
-        showError('emailError', 'Email is required');
-        return;
-    }
-    
-    if (!validateEmail(email)) {
-        showError('emailError', 'Please enter a valid email address');
-        return;
-    }
-    
-    if (!password) {
-        showError('passwordError', 'Password is required');
-        return;
-    }
-    
-    if (password.length < 6) {
-        showError('passwordError', 'Password must be at least 6 characters');
-        return;
-    }
-    
-    // Show loading state
-    submitBtn.querySelector('span').textContent = 'Creating Account...';
-    submitBtn.disabled = true;
-    
-    try {
-        const response = await fetch('/api/auth/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            showNotification('Registration successful! Redirecting to home...', 'success');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1500);
-        } else {
-            showError('emailError', data.error || 'Registration failed');
-        }
-    } catch (error) {
-        showError('emailError', 'Network error. Please try again.');
-    } finally {
-        submitBtn.querySelector('span').textContent = 'Create Account';
-        submitBtn.disabled = false;
-    }
-}
+onAuthStateChanged(auth, (user) => {
+  // If already logged in and we are on sign page, optionally redirect right away
+  if (user) {
+    // Uncomment if you want immediate redirect when returning users hit the sign page
+    // window.location.href = DASHBOARD_URL;
+  }
+});
 
-async function handleSignIn() {
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-    const submitBtn = document.getElementById('submitSignIn');
-    
-    clearErrors();
-    
-    // Validation
-    if (!email) {
-        showError('emailError', 'Email is required');
-        return;
-    }
-    
-    if (!validateEmail(email)) {
-        showError('emailError', 'Please enter a valid email address');
-        return;
-    }
-    
-    if (!password) {
-        showError('passwordError', 'Password is required');
-        return;
-    }
-    
-    // Show loading state
-    submitBtn.querySelector('span').textContent = 'Signing In...';
-    submitBtn.disabled = true;
-    
-    try {
-        const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            showNotification('Sign in successful! Redirecting to home...', 'success');
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1500);
-        } else {
-            showError('emailError', data.error || 'Sign in failed');
-        }
-    } catch (error) {
-        showError('emailError', 'Network error. Please try again.');
-    } finally {
-        submitBtn.querySelector('span').textContent = 'Sign In';
-        submitBtn.disabled = false;
-    }
-}
+// Default mode
+setMode("signin");
 
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    setTimeout(() => {
-        notification.remove();
-    }, 5000);
-}

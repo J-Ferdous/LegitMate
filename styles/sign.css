@@ -18,7 +18,6 @@ body {
   display: block;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   position: relative;
 }
 
@@ -107,9 +106,13 @@ body {
 }
 
 h1 {
-  font-size: 28px;
-  margin-bottom: 10px;
+  font-size: 1.6rem;
+  margin-bottom: 0.22rem;
   font-weight: 700;
+  text-shadow: 
+    0 0 4px rgb(204, 204, 236),    /* Inner glow */ 
+    0 0 4px rgb(49, 94, 94); 
+  animation: glow 1.5s ease-in-out infinite alternate;
 }
 
 .tabs  {
@@ -156,7 +159,7 @@ h1 {
   gap: 12px;
   width: 100%;
   padding: 15px;
-  margin: 15px 0;
+  margin:0;
   border: 1px solid transparent;
   border-radius: 12px;
   cursor: pointer;
@@ -185,6 +188,7 @@ h1 {
   background: rgba(255, 255, 255, 0.9);
   color: #1A1A1A;
   border-color: #DBE0E6;
+  font-size: 1rem;
 }
 .button.google:hover {
   transform: translateY(-3px);
@@ -357,4 +361,121 @@ h1 {
     .main-content { align-items: center;} 
     .container {align-items: center;margin: 15px auto;width: 320px;
   padding: 30px;} 
+}
+
+.flex {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; 
+}
+
+label {
+  text-align: left;
+  margin: 0.2rem;
+}
+
+.hidden { 
+  display: none;
+}
+
+form.auth-form { 
+  display: grid; gap: 10px; margin-top: 1rem;
+}
+
+.input{ 
+  display: grid; gap: 6px;
+}
+
+.input input, #confirmWrap input {
+    padding: 12px 14px;
+    border: 1px solid #2c2f36;
+    border-radius: 12px;
+    background: #11131a; 
+    color: #e8ecf1;
+    outline: none;
+  }
+
+  .submit-btn {
+    position: relative;
+    border: 0;
+    padding: 12px 16px;
+    cursor: pointer;
+    background:linear-gradient(135deg, var(--accent), #5b49ff);
+    color: white;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px rgba(0, 129, 255, 0.3);
+    font-size: 1rem;
+  }
+
+  .or { 
+    text-align:center; 
+    opacity:.8; 
+    margin-top:0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.error { 
+  color:#ff7171; 
+  font-size:.9rem; 
+  min-height: 1.2rem; 
+}
+
+.success { 
+  color:#5fe29b; 
+  font-size:.9rem; 
+  min-height: 1.2rem; 
+}
+
+.tabs { 
+  display:flex; 
+  gap: 8px; 
+  margin-bottom: 10px; 
+}
+
+.tabs > div { 
+  padding: 8px 12px; 
+  border-radius: 999px; 
+  cursor: pointer; 
+}
+
+.provider-row { 
+  display:grid; 
+  gap:10px;
+}
+
+.button { 
+  position:relative; 
+  display:flex; 
+  align-items:center; 
+  gap:10px; 
+  padding:12px 16px; 
+  border-radius:12px; 
+  border:1px solid #2c2f36; 
+  background:#0d0f14; 
+  color:#e8ecf1; 
+  cursor:pointer; 
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #0081ff;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }

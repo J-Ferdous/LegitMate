@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LegitiMate - Sign In / Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="styles/sign.css" rel="stylesheet">
+<link href="styles/shared.css" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <div class="brand" aria-hidden="true">
+      <img class="logo" src="images/logo.png" alt="logo">
+      <span>LegitMate</span>
+    </div>
+    <div class="menu-toggle" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+    <nav aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="features.html">Features</a>
+      <a href="survey.html">Survey</a>
+      <a href="feedback.html">Feedback</a>
+      <a class="register" href="sign.html">Register</a>
+    </nav>
+  </header>
+
+  <div class="aurora-background"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="main-layout">
+    <div class="spline-view">
+      <iframe src="https://my.spline.design/greetingrobot-SGGKKmVi3jqTvOEAG1NWG8Oe/" frameborder="0"></iframe>
+    </div>
+
+    <div class="container" id="form-container">
+      <h1 id="form-title">Welcome Back!</h1>
+
+      <div class="tabs">
+        <div id="signInTab" class="active">Sign In</div>
+        <div id="registerTab">Register</div>
+      </div>
+
+       <!-- Email auth form -->
+      <form id="authForm" class="auth-form" autocomplete="on">
+        <div class="input">
+          <label for="email">Email</label>
+          <input id="email" type="email" required placeholder="you@example.com" />
+        </div>
+        <div class="input">
+          <label for="password">Password</label>
+          <input id="password" type="password" minlength="6" required placeholder="••••••••" />
+        </div>
+        <div id="confirmWrap" class="hidden">
+          <label for="confirm">Confirm Password</label>
+          <input id="confirm" type="password" minlength="6" placeholder="••••••••" />
+        </div>
+        <div class="error" id="errorMsg"></div>
+        <div class="success" id="successMsg"></div>
+        <button class="submit-btn" id="submitBtn" type="submit">Sign In</button>
+      </form>
+        <div class="or">— or —</div>
+      <div class="provider-row">
+        <button id="googleBtn" class="button google" type="button">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" height="20" alt="Google"> <span>Sign in with Google</span>
+        </button>
+      </div>
+      <div class="footer" id="footer-text">
+    Don't have an account? <a href="#" id="switchToRegister">Create one</a>
+</div>
+    </div>
+  </div>
+  <!-- Load our auth logic as a module -->
+  <script type="module" src="js/sign.js"></script>
+</body>
+</html>
