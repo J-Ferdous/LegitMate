@@ -303,14 +303,56 @@ try {
   showError(mapAuthError(err));
 }
 
-
 onAuthStateChanged(auth, (user) => {
-  // If already logged in and we are on sign page, optionally redirect right away
+  const registerLink = document.querySelector(".register"); // The Register button
+
   if (user) {
-    // Uncomment if you want immediate redirect when returning users hit the sign page
-    // window.location.href = DASHBOARD_URL;
+    // Create avatar container
+    const avatarDiv = document.createElement("div");
+    avatarDiv.classList.add("user-avatar");
+
+    if (user.photoURL) {
+      // If user has Google profile image
+      const img = document.createElement("img");
+      img.src = user.photoURL;
+      img.alt = "User Avatar";
+      avatarDiv.appendChild(img);
+    } else {
+      // Use first letter of display name or email
+      const initial = (user.displayName || user.email).charAt(0).toUpperCase();
+      avatarDiv.textContent = initial;
+    }
+
+    // Replace Register button with avatar
+    if (registerLink) {
+      registerLink.replaceWith(avatarDiv);
+    }
+
+    // Optional: Add click functionality for avatar (e.g., logout or profile menu)
+    avatarDiv.addEventListener("click", () => {
+      // Example: Show a logout confirmation
+      const confirmLogout = confirm("Do you want to log out?");
+      if (confirmLogout) {
+        auth.signOut().then(() => {
+          window.location.reload();
+        });
+      }
+    });
+  } else {
+    // If logged out, ensure the Register link is shown
+    if (!document.querySelector(".register")) {
+      const nav = document.querySelector("nav");
+      if (nav) {
+        const newLink = document.createElement("a");
+        newLink.classList.add("register");
+        newLink.href = "sign-up.html";
+        newLink.textContent = "Register";
+        nav.appendChild(newLink);
+      }
+    }
   }
 });
+
 
 // Default mode
 setMode("signin");

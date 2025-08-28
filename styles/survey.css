@@ -165,3 +165,6 @@
       transform: translateY(-3px);
       box-shadow: 0 10px 30px var(--accent-glow);
     }
+    .user-avatar {
+      background-color:white ;
+    }
