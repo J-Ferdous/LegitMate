@@ -140,16 +140,23 @@ def analyze_job_description(description: str):
     if MODEL is not None:
         try:
             text_features = extract_text_features(description)
+            print(f"Extracted features: {text_features}")
+            
             if hasattr(MODEL, 'predict_proba'):
                 proba = MODEL.predict_proba([text_features])
-                ml_confidence = float(proba[0][1])  # probability of scam
+                print(f"Model probabilities: {proba[0]}")
+                ml_confidence = float(proba[0][1])  # probability of scam (class 1)
                 ml_is_scam = ml_confidence > 0.5
+                print(f"ML confidence: {ml_confidence}, ML is_scam: {ml_is_scam}")
             elif hasattr(MODEL, 'predict'):
                 prediction = MODEL.predict([text_features])[0]
                 ml_is_scam = bool(prediction)
                 ml_confidence = 0.8 if ml_is_scam else 0.2
+                print(f"ML prediction: {prediction}, ML is_scam: {ml_is_scam}")
         except Exception as e:
             print(f"ML model prediction failed: {e}")
+            import traceback
+            traceback.print_exc()
             ml_confidence = 0.0
             ml_is_scam = False
 
@@ -245,33 +252,49 @@ VECTORIZER: Optional[TfidfVectorizer] = None
 MODEL_ERROR: Optional[str] = None
 
 def extract_text_features(text: str) -> List[float]:
+    """Extract features from text for ML model - matches training features"""
+    if not text:
+        text = ""
+    
     text_lower = text.lower()
     word_count = len(text.split())
     char_count = len(text)
     sentence_count = len(re.split(r'[.!?]+', text))
 
+    # Scam indicators - matching training features
     urgent_words = ['urgent', 'immediate', 'asap', 'quick', 'fast', 'hurry', 'now']
-    money_words = ['salary', 'pay', 'money', 'income', 'earn', 'profit', 'cash']
-    guarantee_words = ['guaranteed', 'promise', 'sure', 'certain', 'definite']
-    work_from_home = ['remote', 'work from home', 'home based', 'telecommute']
-
+    money_words = ['salary', 'pay', 'money', 'income', 'earn', 'profit', 'cash', 'guaranteed', 'promise']
+    work_from_home = ['remote', 'work from home', 'home based', 'telecommute', 'online']
+    suspicious_words = ['investment', 'cryptocurrency', 'bitcoin', 'multi-level', 'pyramid', 'commission only']
+    
     urgent_count = sum(1 for word in urgent_words if word in text_lower)
     money_count = sum(1 for word in money_words if word in text_lower)
-    guarantee_count = sum(1 for word in guarantee_words if word in text_lower)
     wfh_count = sum(1 for word in work_from_home if word in text_lower)
+    suspicious_count = sum(1 for word in suspicious_words if word in text_lower)
 
+    # Contact information
     has_email = 1 if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', text) else 0
     has_phone = 1 if re.search(r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b', text) else 0
     has_website = 1 if re.search(r'http[s]?://', text) else 0
 
+    # Text characteristics
     exclamation_count = text.count('!')
     caps_ratio = sum(1 for c in text if c.isupper()) / max(len(text), 1)
+    
+    # Specific scam phrases
+    scam_phrases = [
+        'no experience needed', 'work from home', 'high salary', 'quick money',
+        'easy money', 'get rich quick', 'pay upfront', 'registration fee',
+        'processing fee', 'guaranteed income', 'unlimited earning',
+        'no interview required', 'immediate start'
+    ]
+    scam_phrase_count = sum(1 for phrase in scam_phrases if phrase in text_lower)
 
     return [
         word_count, char_count, sentence_count,
-        urgent_count, money_count, guarantee_count, wfh_count,
+        urgent_count, money_count, wfh_count, suspicious_count,
         has_email, has_phone, has_website,
-        exclamation_count, caps_ratio
+        exclamation_count, caps_ratio, scam_phrase_count
     ]
 
 def load_model() -> None:
@@ -280,6 +303,7 @@ def load_model() -> None:
 
     if not os.path.exists(MODEL_PATH):
         MODEL_ERROR = f"Model file not found at {MODEL_PATH}"
+        print(f"Model loading error: {MODEL_ERROR}")
         return
 
     try:
@@ -289,13 +313,22 @@ def load_model() -> None:
         if isinstance(model_data, dict):
             MODEL = model_data.get('model')
             VECTORIZER = model_data.get('vectorizer')
+            if MODEL is not None:
+                print(f"Model loaded successfully: {type(MODEL)}")
+                print(f"Feature names: {model_data.get('feature_names', 'Unknown')}")
+            else:
+                MODEL_ERROR = "Model not found in loaded data"
+                print(f"Model loading error: {MODEL_ERROR}")
         else:
             MODEL = model_data
-            VECTORIZER = TfidfVectorizer(max_features=1000, stop_words='english')
+            VECTORIZER = None
+            print(f"Model loaded successfully: {type(MODEL)}")
+            
     except Exception as e:
         MODEL = None
         VECTORIZER = None
         MODEL_ERROR = f"Failed to load model: {e}"
+        print(f"Model loading error: {MODEL_ERROR}")
 
 def compute_confidence_from_model(model: Any, features: List[float]) -> float:
     try:
