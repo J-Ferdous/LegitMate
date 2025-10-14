@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head> 
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Interview Prep Assistant — LegitMate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="styles/index.css" rel="stylesheet">
+    <link href="styles/shared.css" rel="stylesheet">
+    <link href="styles/interview.css" rel="stylesheet">
+</head>
+<body>
+  <div class="aurora-background"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <header>
+    <div class="brand" aria-hidden="true">
+      <img  class="logo" src="images/logo.png" alt="logo">
+      <span>LegitMate</span>
+    </div>
+    <div class="menu-toggle" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="features.html">Features</a>
+      <a href="survey.html">Survey</a>
+      <a href="feedback.html">Feedback</a>
+      <a class="register" href="sign.html">Register/Login</a>
+    </nav>
+  </header>
+
+    <main class="container">
+        <section class="chat-container">
+            <div class="features-header">
+                <h1>Interview Prep Assistant</h1>
+                <p class="lead">Ace your next interview with personalized guidance and AI-powered feedback!</p>
+            </div>
+
+            <section id="chat-section" class="card">
+                <div class="chat-header">
+                    <h2>Interview Coach</h2>
+                    <div class="chat-controls">
+                        <button id="clear-chat" title="Clear conversation">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button id="suggest-questions" title="Get question suggestions">
+                            <i class="fas fa-lightbulb"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="chat-window" class="chat-window">
+                    <div class="chat-message bot-message">
+                        <p>Hello! I'm your Interview Prep Assistant. I can help you practice common interview questions, provide feedback, and suggest resources to improve your skills. What would you like to work on today?</p>
+                        <div class="message-time">Just now</div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn" data-question="Tell me about yourself">Tell me about yourself</button>
+                    <button class="quick-action-btn" data-question="What are your strengths?">Your strengths</button>
+                    <button class="quick-action-btn" data-question="What is your greatest weakness?">Your weakness</button>
+                    <button class="quick-action-btn" data-question="Technical interview prep">Technical questions</button>
+                </div>
+                <div class="chat-input-area">
+                    <div class="input-wrapper">
+                        <textarea id="user-input" placeholder="Type your question or topic here..." aria-label="Type your interview question or topic" rows="1"></textarea>
+                        <button class="mic-button" id="mic-button" title="Voice input">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                    </div>
+                    <button id="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Send</span>
+                    </button>
+                </div>
+            </section>
+        </section>
+        
+         <aside class="right" aria-hidden="true">
+      <div class="spline-frame">
+        <iframe      
+          src="https://my.spline.design/cutecomputerfollowcursor-WecQVXlG3vNhm3y2YiIdqxPR/"
+          title="3D chips scene"
+          style="width:100%;height:100%;border:0;display:block;"
+          allow="fullscreen; vr; accelerometer; gyroscope; autoplay; encrypted-media"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+        ></iframe>
+      </div>
+    </aside>
+    </main>
+    <script type="module" src="js/shared.js"></script> 
+    <script src="js/index.js"></script>
+    <script type="module" src="js/interview.js"></script> 
+</body>
+</html>

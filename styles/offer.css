@@ -1,0 +1,211 @@
+:root {
+            /* Color Palette */
+            --color-white: #ffffff;
+            --color-blue-primary: #38bdf8;
+            --color-blue-dark: #2563eb;
+            --color-blue-light: #60a5fa;
+            --color-gray-text: #cbd5e1;
+            --color-gray-dark: #f1f5f9;
+            --color-card-bg: rgba(255, 255, 255, 0.06);
+            --color-card-border: rgba(255, 255, 255, 0.15);
+            --color-upload-border: rgba(148, 163, 184, 0.5);
+            --color-upload-bg: rgba(0, 0, 0, 0.2);
+            --color-upload-hover: rgba(56, 189, 248, 0.12);
+            --color-progress-bg: rgba(255, 255, 255, 0.2);
+            --color-error-border: #e11d48;
+            --color-error-bg: rgba(254, 226, 226, 0.08);
+            --color-error-text: #fca5a5;
+            --color-success-border: #22c55e;
+            --color-success-bg: rgba(187, 247, 208, 0.08);
+            --color-success-text: #86efac;
+
+            /* Shadows & Glows */
+            --shadow-text-main: 0 0 12px rgba(56, 189, 248, 0.6), 0 0 20px rgba(37, 99, 235, 0.4);
+            --shadow-text-lead: 0 0 8px rgba(0, 0, 0, 0.6);
+            --shadow-card: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 18px rgba(56, 189, 248, 0.15);
+            --shadow-card-hover: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.3);
+            --shadow-icon: 0 0 12px rgba(56, 189, 248, 0.8);
+            --shadow-button-hover: 0 0 20px rgba(56, 189, 248, 0.8);
+            --shadow-progress: 0 0 12px rgba(56, 189, 248, 0.8);
+            --shadow-score: 0 0 20px rgba(56, 189, 248, 1);
+        }
+
+        /* General & Layout */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* A dark theme for the background */
+            color: var(--color-gray-dark);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Header & Lead text */
+        .features-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .features-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-gray-dark);
+            text-shadow: var(--shadow-text-main);
+            letter-spacing: 1px;
+        }
+        .lead {
+            font-size: 1.2rem;
+            color: var(--color-gray-text);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+            text-shadow: var(--shadow-text-lead);
+        }
+
+        /* Card Style - Glassmorphism with glow */
+        .card {
+            background: var(--color-card-bg);
+            border-radius: 18px;
+            padding: 2rem;
+            backdrop-filter: blur(14px);
+            border: 1px solid var(--color-card-border);
+            box-shadow: var(--shadow-card);
+            margin-bottom: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        /* Upload Section */
+        .upload-area {
+            border: 2px dashed var(--color-upload-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--color-gray-text);
+            background: var(--color-upload-bg);
+            text-align: center;
+        }
+        .upload-area:hover {
+            border-color: var(--color-blue-primary);
+            background: var(--color-upload-hover);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--color-blue-primary);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 18px rgba(56, 189, 248, 0.9);
+        }
+        .upload-area p {
+            margin: 0.5rem 0;
+        }
+        .upload-area button {
+            background: linear-gradient(90deg, var(--color-blue-dark), var(--color-blue-primary));
+            color: var(--color-white);
+            border: none;
+            padding: 0.8rem 1.6rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .upload-area button:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: var(--shadow-button-hover);
+        }
+        #file-input {
+            display: none; /* Hide the native input */
+        }
+        .file-info {
+            text-align: center;
+            font-style: italic;
+            color: var(--color-gray-text);
+        }
+
+        /* Analysis & Progress */
+        .progress-bar {
+            height: 10px;
+            background: var(--color-progress-bg);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-blue-dark), var(--color-blue-primary), var(--color-blue-light));
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: var(--shadow-progress);
+        }
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-weight: 600;
+            color: var(--color-gray-dark);
+        }
+        .analysis-status {
+            text-align: center;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+        .loading-spinner {
+            border: 3px solid rgba(255,255,255,.3);
+            border-top-color: var(--color-blue-primary);
+        }
+
+        /* Results Section */
+        .score-display {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: var(--color-blue-primary);
+            margin: 1rem 0;
+            text-shadow: var(--shadow-score);
+            text-align: center;
+        }
+        .issue-item {
+            padding: 1rem;
+            border-left: 4px solid var(--color-error-border);
+            background: var(--color-error-bg);
+            margin-bottom: 1rem;
+            border-radius: 0 10px 10px 0;
+            color: var(--color-error-text);
+            transition: background 0.3s;
+        }
+        .issue-item:hover {
+            background: rgba(254, 226, 226, 0.15);
+        }
+        .issue-item.good {
+            border-left-color: var(--color-success-border);
+            background: var(--color-success-bg);
+            color: var(--color-success-text);
+        }
+        .issue-item.good:hover {
+            background: rgba(187, 247, 208, 0.15);
+        }
+        .issue-title {
+            font-weight: bold;
+        }
+        .analysis-again {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            background: linear-gradient(90deg, var(--color-blue-dark), var(--color-blue-primary));
+            color: var(--color-white);
+            padding: 0.85rem 1.6rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .analysis-again:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 0 22px rgba(56, 189, 248, 0.9);
+        }

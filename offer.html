@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Offer Letter Analyzer — LegitMate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="styles/shared.css" rel="stylesheet">
+    <link href="styles/features.css" rel="stylesheet">
+    <link href="styles/offer.css" rel="stylesheet">   
+</head>
+<body>
+    <div class="aurora-background"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <header>
+    <div class="brand" aria-hidden="true">
+      <img  class="logo" src="images/logo.png" alt="logo">
+      <span>LegitMate</span>
+    </div>
+    <div class="menu-toggle" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav aria-label="Primary">
+      <a href="index.html">Home</a>
+      <a href="features.html">Features</a>
+      <a href="survey.html">Survey</a>
+      <a href="feedback.html">Feedback</a>
+      <a class="register" href="sign.html">Register/Login</a>
+    </nav>
+  </header>
+
+    <main class="container">
+        <div class="features-header">
+            <h1>Offer Letter Analyzer</h1>
+            <p class="lead">Ensure your offer letter is transparent and secure.</p>
+        </div>
+        <section id="upload-section" class="card">
+            <h2>Upload Your Offer Letter</h2>
+            <p>We support PDF, DOCX, and plain text files</p>
+            
+            <div id="upload-area" class="upload-area" role="button" tabindex="0" aria-label="Drag and drop or click to upload file">
+                <div class="upload-icon">📄</div>
+                <p>Drag & drop your file here or click to browse</p>
+                <label for="file-input">
+                    <button type="button">Select File</button>
+                </label>
+            </div>
+            <input type="file" id="file-input" accept=".pdf,.docx,.txt">
+            
+            <p class="file-info" id="file-info" aria-live="polite">No file selected</p>
+        </section>
+
+        <section id="analysis-section" class="card" style="display: none;">
+            <h2>Analyzing Your Offer Letter</h2>
+            <p id="analysis-status" class="analysis-status">Initializing analysis...</p>
+            
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <p id="progress-text" class="progress-text">0% Complete</p>
+            </div>
+        </section>
+
+        <section id="results-section" class="card" style="display: none;">
+            <div class="results-header">
+                <h2>Analysis Complete 🎉</h2>
+                <p>Your offer letter analysis results:</p>
+                <div id="score-display" class="score-display">0%</div>
+                <p id="score-description">No analysis performed yet.</p>
+            </div>
+            
+            <div id="issues-list" class="issues-list">
+                </div>
+            
+            <button id="analyze-another" class="analysis-again">Analyze Another Document</button>
+        </section>
+    </main>
+
+    <script type="module">
+        // JavaScript for file handling and analysis
+        document.addEventListener('DOMContentLoaded', () => {
+            const DOM = {
+                uploadSection: document.getElementById('upload-section'),
+                analysisSection: document.getElementById('analysis-section'),
+                resultsSection: document.getElementById('results-section'),
+                uploadArea: document.getElementById('upload-area'),
+                fileInput: document.getElementById('file-input'),
+                fileInfo: document.getElementById('file-info'),
+                progressFill: document.getElementById('progress-fill'),
+                progressText: document.getElementById('progress-text'),
+                analysisStatus: document.getElementById('analysis-status'),
+                scoreDisplay: document.getElementById('score-display'),
+                scoreDescription: document.getElementById('score-description'),
+                issuesList: document.getElementById('issues-list'),
+                analyzeAnotherBtn: document.getElementById('analyze-another')
+            };
+
+            const VALID_FILE_TYPES = [
+                'application/pdf',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'text/plain',
+                'application/msword'
+            ];
+
+            const ANALYSIS_MESSAGES = [
+                "Extracting text from document...",
+                "Identifying key sections...",
+                "Checking for unclear terms...",
+                "Analyzing compensation details...",
+                "Reviewing for compliance issues...",
+                "Generating final report..."
+            ];
+
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return `${bytes} bytes`;
+                else if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
+                return `${(bytes / 1048576).toFixed(1)} MB`;
+            }
+
+            function showSection(section) {
+                DOM.uploadSection.style.display = 'none';
+                DOM.analysisSection.style.display = 'none';
+                DOM.resultsSection.style.display = 'none';
+                section.style.display = 'block';
+            }
+
+            async function simulateAnalysis() {
+                let progress = 0;
+                let step = 0;
+                const totalSteps = ANALYSIS_MESSAGES.length;
+
+                return new Promise(resolve => {
+                    const interval = setInterval(() => {
+                        // Simulate progress
+                        progress += Math.random() * (100 / totalSteps) + 1;
+                        if (progress > 100) progress = 100;
+
+                        // Update UI
+                        DOM.progressFill.style.width = `${progress}%`;
+                        DOM.progressText.textContent = `${Math.round(progress)}% Complete`;
+                        
+                        const currentStep = Math.min(Math.floor(progress / (100 / totalSteps)), totalSteps - 1);
+                        if (currentStep > step) {
+                            step = currentStep;
+                            DOM.analysisStatus.textContent = ANALYSIS_MESSAGES[step];
+                        }
+
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            DOM.progressText.textContent = '100% Complete';
+                            resolve();
+                        }
+                    }, 200);
+                });
+            }
+
+            function generateSampleIssues(score) {
+                const allIssues = [
+                    { title: "Clear Salary Information", description: "Your base salary, bonus structure, and payment frequency are clearly defined.", good: true },
+                    { title: "Job Responsibilities Defined", description: "The document clearly outlines your role and expectations.", good: true },
+                    { title: "Compliant with Labor Standards", description: "The offer follows standard employment regulations for your location.", good: true },
+                    { title: "Start Date and Location Specified", description: "The document clearly states when and where you're expected to work.", good: true },
+                    { title: "Vague Non-Compete Clause", description: "The non-compete agreement lacks specific terms regarding duration and geographic scope.", good: false },
+                    { title: "Missing Benefits Details", description: "Health insurance, retirement plans, and other benefits are not clearly explained.", good: false },
+                    { title: "Unclear Equity Compensation", description: "Stock options or equity grants are mentioned but without specific details.", good: false },
+                    { title: "Overly Broad Intellectual Property Clause", description: "The IP assignment clause may claim ownership of work done outside company time.", good: false }
+                ];
+                
+                const goodIssues = allIssues.filter(issue => issue.good);
+                const badIssues = allIssues.filter(issue => !issue.good);
+                
+                const selectedIssues = [];
+                // More good issues for higher scores, more bad for lower
+                const numBadIssues = score < 75 ? 3 : (score < 90 ? 2 : 1);
+                
+                // Add bad issues first to ensure they are always present for lower scores
+                for (let i = 0; i < numBadIssues && badIssues.length > 0; i++) {
+                    const randomIndex = Math.floor(Math.random() * badIssues.length);
+                    selectedIssues.push(badIssues[randomIndex]);
+                    badIssues.splice(randomIndex, 1);
+                }
+
+                // Fill the rest with good issues
+                const remainingIssues = 5 - selectedIssues.length;
+                for (let i = 0; i < remainingIssues && goodIssues.length > 0; i++) {
+                    const randomIndex = Math.floor(Math.random() * goodIssues.length);
+                    selectedIssues.push(goodIssues[randomIndex]);
+                    goodIssues.splice(randomIndex, 1);
+                }
+                
+                // Shuffle the final list for variety
+                return selectedIssues.sort(() => Math.random() - 0.5);
+            }
+
+            function showResults() {
+                const score = Math.floor(Math.random() * 36) + 60;
+                DOM.scoreDisplay.textContent = `${score}%`;
+                
+                if (score >= 90) {
+                    DOM.scoreDescription.textContent = "Excellent offer letter with clear terms";
+                } else if (score >= 75) {
+                    DOM.scoreDescription.textContent = "Generally good with some areas for improvement";
+                } else {
+                    DOM.scoreDescription.textContent = "Needs review - several issues detected";
+                }
+                
+                const issues = generateSampleIssues(score);
+                DOM.issuesList.innerHTML = '';
+                
+                issues.forEach(issue => {
+                    const issueEl = document.createElement('div');
+                    issueEl.className = `issue-item ${issue.good ? 'good' : ''}`;
+                    issueEl.innerHTML = `<div class="issue-title">${issue.title}</div><div class="issue-desc">${issue.description}</div>`;
+                    DOM.issuesList.appendChild(issueEl);
+                });
+                
+                showSection(DOM.resultsSection);
+            }
+
+            function handleFile(file) {
+                if (!VALID_FILE_TYPES.includes(file.type)) {
+                    alert('Please upload a PDF, DOCX, or TXT file.');
+                    DOM.fileInfo.textContent = 'Invalid file type selected.';
+                    return;
+                }
+                
+                DOM.fileInfo.textContent = `Selected: ${file.name} (${formatFileSize(file.size)})`;
+                
+                showSection(DOM.analysisSection);
+                simulateAnalysis().then(() => {
+                    showResults();
+                });
+            }
+            
+            // Event Listeners
+            DOM.uploadArea.addEventListener('click', () => {
+                DOM.fileInput.click();
+            });
+
+            DOM.uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                DOM.uploadArea.classList.add('dragover');
+            });
+            
+            DOM.uploadArea.addEventListener('dragleave', () => {
+                DOM.uploadArea.classList.remove('dragover');
+            });
+            
+            DOM.uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                DOM.uploadArea.classList.remove('dragover');
+                if (e.dataTransfer.files.length) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+            
+            DOM.fileInput.addEventListener('change', () => {
+                if (DOM.fileInput.files.length) {
+                    handleFile(DOM.fileInput.files[0]);
+                }
+            });
+            
+            DOM.analyzeAnotherBtn.addEventListener('click', () => {
+                DOM.fileInput.value = '';
+                DOM.fileInfo.textContent = 'No file selected';
+                showSection(DOM.uploadSection);
+            });
+
+            // Initial state
+            showSection(DOM.uploadSection);
+        });
+    </script>
+    <script type="module" src="js/shared.js"></script> 
+    <script src="js/index.js"></script>
+</body>
+</html>

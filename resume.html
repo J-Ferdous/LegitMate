@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Resume Scanner — LegitMate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="styles/shared.css" rel="stylesheet">
+    <link href="styles/features.css" rel="stylesheet">
+    <link href="styles/offer.css" rel="stylesheet">   
+</head>
+<body>
+    <div class="aurora-background"></div>
+    <canvas id="particle-canvas"></canvas>
+
+    <header>
+        <div class="brand" aria-hidden="true">
+            <img class="logo" src="images/logo.png" alt="logo">
+            <span>LegitMate</span>
+        </div>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav aria-label="Primary">
+            <a href="index.html">Home</a>
+            <a href="features.html">Features</a>
+            <a href="survey.html">Survey</a>
+            <a href="feedback.html">Feedback</a>
+            <a class="register" href="sign.html">Register/Login</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="features-header">
+            <h1>Resume Scanner</h1>
+            <p class="lead">Optimize your resume with AI-powered keyword and formatting analysis.</p>
+        </div>
+
+        <!-- Upload Section -->
+        <section id="upload-section" class="card">
+            <h2>Upload Your Resume</h2>
+            <p>Supported formats: PDF, DOCX, TXT</p>
+            
+            <div id="upload-area" class="upload-area" role="button" tabindex="0" aria-label="Drag and drop or click to upload file">
+                <div class="upload-icon">📄</div>
+                <p>Drag & drop your file here or click to browse</p>
+                <label for="file-input">
+                    <button type="button">Select File</button>
+                </label>
+            </div>
+            <input type="file" id="file-input" accept=".pdf,.docx,.txt">
+            
+            <p class="file-info" id="file-info" aria-live="polite">No file selected</p>
+        </section>
+
+        <!-- Analysis Section -->
+        <section id="analysis-section" class="card" style="display: none;">
+            <h2>Analyzing Your Resume</h2>
+            <p id="analysis-status" class="analysis-status">Initializing analysis...</p>
+            
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <p id="progress-text" class="progress-text">0% Complete</p>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results-section" class="card" style="display: none;">
+            <div class="results-header">
+                <h2>Analysis Complete 🎉</h2>
+                <p>Your resume analysis results:</p>
+                <div id="score-display" class="score-display">0%</div>
+                <p id="score-description">No analysis performed yet.</p>
+            </div>
+            
+            <div id="issues-list" class="issues-list"></div>
+            
+            <button id="analyze-another" class="analysis-again">Analyze Another Resume</button>
+        </section>
+    </main>
+
+    <script type="module">
+        document.addEventListener('DOMContentLoaded', () => {
+            const DOM = {
+                uploadSection: document.getElementById('upload-section'),
+                analysisSection: document.getElementById('analysis-section'),
+                resultsSection: document.getElementById('results-section'),
+                uploadArea: document.getElementById('upload-area'),
+                fileInput: document.getElementById('file-input'),
+                fileInfo: document.getElementById('file-info'),
+                progressFill: document.getElementById('progress-fill'),
+                progressText: document.getElementById('progress-text'),
+                analysisStatus: document.getElementById('analysis-status'),
+                scoreDisplay: document.getElementById('score-display'),
+                scoreDescription: document.getElementById('score-description'),
+                issuesList: document.getElementById('issues-list'),
+                analyzeAnotherBtn: document.getElementById('analyze-another')
+            };
+
+            const VALID_FILE_TYPES = [
+                'application/pdf',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'text/plain',
+                'application/msword'
+            ];
+
+            const ANALYSIS_MESSAGES = [
+                "Extracting text from resume...",
+                "Checking formatting consistency...",
+                "Scanning for job-related keywords...",
+                "Reviewing education and work history...",
+                "Assessing readability and ATS compatibility...",
+                "Generating optimization report..."
+            ];
+
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return `${bytes} bytes`;
+                else if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
+                return `${(bytes / 1048576).toFixed(1)} MB`;
+            }
+
+            function showSection(section) {
+                DOM.uploadSection.style.display = 'none';
+                DOM.analysisSection.style.display = 'none';
+                DOM.resultsSection.style.display = 'none';
+                section.style.display = 'block';
+            }
+
+            async function simulateAnalysis() {
+                let progress = 0;
+                let step = 0;
+                const totalSteps = ANALYSIS_MESSAGES.length;
+
+                return new Promise(resolve => {
+                    const interval = setInterval(() => {
+                        progress += Math.random() * (100 / totalSteps) + 1;
+                        if (progress > 100) progress = 100;
+
+                        DOM.progressFill.style.width = `${progress}%`;
+                        DOM.progressText.textContent = `${Math.round(progress)}% Complete`;
+                        
+                        const currentStep = Math.min(Math.floor(progress / (100 / totalSteps)), totalSteps - 1);
+                        if (currentStep > step) {
+                            step = currentStep;
+                            DOM.analysisStatus.textContent = ANALYSIS_MESSAGES[step];
+                        }
+
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            DOM.progressText.textContent = '100% Complete';
+                            resolve();
+                        }
+                    }, 200);
+                });
+            }
+
+            function generateSampleIssues(score) {
+                const allIssues = [
+                    { title: "Strong Keyword Match", description: "Your resume contains relevant industry-specific keywords.", good: true },
+                    { title: "Clear Formatting", description: "Your resume uses consistent fonts, margins, and spacing.", good: true },
+                    { title: "Concise Experience Section", description: "Your work history is clearly organized and easy to read.", good: true },
+                    { title: "ATS Friendly Structure", description: "The document avoids tables and graphics that confuse ATS systems.", good: true },
+                    { title: "Missing Keywords", description: "Your resume lacks important role-specific keywords.", good: false },
+                    { title: "Unclear Job Titles", description: "Some job titles or roles are not clearly defined.", good: false },
+                    { title: "Inconsistent Formatting", description: "Headings, dates, or bullet points are not aligned consistently.", good: false },
+                    { title: "Overly Long Descriptions", description: "Some sections contain too much text, making them hard to scan.", good: false }
+                ];
+
+                const goodIssues = allIssues.filter(i => i.good);
+                const badIssues = allIssues.filter(i => !i.good);
+
+                const selectedIssues = [];
+                const numBadIssues = score < 75 ? 3 : (score < 90 ? 2 : 1);
+
+                for (let i = 0; i < numBadIssues && badIssues.length > 0; i++) {
+                    const randomIndex = Math.floor(Math.random() * badIssues.length);
+                    selectedIssues.push(badIssues[randomIndex]);
+                    badIssues.splice(randomIndex, 1);
+                }
+
+                const remainingIssues = 5 - selectedIssues.length;
+                for (let i = 0; i < remainingIssues && goodIssues.length > 0; i++) {
+                    const randomIndex = Math.floor(Math.random() * goodIssues.length);
+                    selectedIssues.push(goodIssues[randomIndex]);
+                    goodIssues.splice(randomIndex, 1);
+                }
+
+                return selectedIssues.sort(() => Math.random() - 0.5);
+            }
+
+            function showResults() {
+                const score = Math.floor(Math.random() * 36) + 60;
+                DOM.scoreDisplay.textContent = `${score}%`;
+
+                if (score >= 90) {
+                    DOM.scoreDescription.textContent = "Excellent resume, ready for applications!";
+                } else if (score >= 75) {
+                    DOM.scoreDescription.textContent = "Good resume, but can be improved with some optimizations.";
+                } else {
+                    DOM.scoreDescription.textContent = "Resume needs major improvements for ATS and readability.";
+                }
+
+                const issues = generateSampleIssues(score);
+                DOM.issuesList.innerHTML = '';
+
+                issues.forEach(issue => {
+                    const issueEl = document.createElement('div');
+                    issueEl.className = `issue-item ${issue.good ? 'good' : ''}`;
+                    issueEl.innerHTML = `<div class="issue-title">${issue.title}</div><div class="issue-desc">${issue.description}</div>`;
+                    DOM.issuesList.appendChild(issueEl);
+                });
+
+                showSection(DOM.resultsSection);
+            }
+
+            function handleFile(file) {
+                if (!VALID_FILE_TYPES.includes(file.type)) {
+                    alert('Please upload a PDF, DOCX, or TXT file.');
+                    DOM.fileInfo.textContent = 'Invalid file type selected.';
+                    return;
+                }
+
+                DOM.fileInfo.textContent = `Selected: ${file.name} (${formatFileSize(file.size)})`;
+
+                showSection(DOM.analysisSection);
+                simulateAnalysis().then(() => {
+                    showResults();
+                });
+            }
+
+            DOM.uploadArea.addEventListener('click', () => DOM.fileInput.click());
+            DOM.uploadArea.addEventListener('dragover', e => { e.preventDefault(); DOM.uploadArea.classList.add('dragover'); });
+            DOM.uploadArea.addEventListener('dragleave', () => DOM.uploadArea.classList.remove('dragover'));
+            DOM.uploadArea.addEventListener('drop', e => {
+                e.preventDefault();
+                DOM.uploadArea.classList.remove('dragover');
+                if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+            });
+
+            DOM.fileInput.addEventListener('change', () => {
+                if (DOM.fileInput.files.length) handleFile(DOM.fileInput.files[0]);
+            });
+
+            DOM.analyzeAnotherBtn.addEventListener('click', () => {
+                DOM.fileInput.value = '';
+                DOM.fileInfo.textContent = 'No file selected';
+                showSection(DOM.uploadSection);
+            });
+
+            showSection(DOM.uploadSection);
+        });
+    </script>
+
+    <script type="module" src="js/shared.js"></script> 
+    <script src="js/index.js"></script>
+</body>
+</html>
